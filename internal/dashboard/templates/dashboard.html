@@ -1,0 +1,114 @@
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon users">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <span class="stat-value">{{.Stats.TotalUsers}}</span>
+            <span class="stat-label">Total Users</span>
+        </div>
+        <div class="stat-footer">
+            <span class="stat-change positive">{{.Stats.ActiveUsers}} active this week</span>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon transactions">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l4.59-4.58L18 11l-6 6z"/>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <span class="stat-value">{{.Stats.TotalTransactions}}</span>
+            <span class="stat-label">Transactions</span>
+        </div>
+        <div class="stat-footer">
+            <span class="stat-change">{{formatAmount .Stats.TotalVolume}} total volume</span>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon webhooks">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <span class="stat-value">{{.Stats.ActiveWebhooks}}</span>
+            <span class="stat-label">Active Webhooks</span>
+        </div>
+        <div class="stat-footer">
+            <span class="stat-change">Delivering events</span>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon jobs">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <span class="stat-value">{{.Stats.PendingJobs}}</span>
+            <span class="stat-label">Pending Jobs</span>
+        </div>
+        <div class="stat-footer">
+            {{if gt .Stats.FailedJobs 0}}
+            <span class="stat-change negative">{{.Stats.FailedJobs}} failed</span>
+            {{else}}
+            <span class="stat-change positive">No failures</span>
+            {{end}}
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="card">
+        <div class="card-header">
+            <h3>Recent Activity</h3>
+            <span class="badge">{{.Stats.AuditLogsToday}} today</span>
+        </div>
+        <div class="card-body">
+            <ul class="activity-list">
+                {{range .Activity}}
+                <li class="activity-item">
+                    <span class="activity-type {{.Type}}">{{.Type}}</span>
+                    <span class="activity-message">{{.Message}}</span>
+                    <span class="activity-time">{{formatTime .Timestamp}}</span>
+                </li>
+                {{else}}
+                <li class="activity-item empty">No recent activity</li>
+                {{end}}
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>System Status</h3>
+            <span class="badge success">Healthy</span>
+        </div>
+        <div class="card-body">
+            <div class="status-list">
+                <div class="status-item">
+                    <span class="status-name">Database</span>
+                    <span class="status-indicator online"></span>
+                </div>
+                <div class="status-item">
+                    <span class="status-name">TON Provider</span>
+                    <span class="status-indicator online"></span>
+                </div>
+                <div class="status-item">
+                    <span class="status-name">WebSocket Hub</span>
+                    <span class="status-indicator online"></span>
+                </div>
+                <div class="status-item">
+                    <span class="status-name">Job Queue</span>
+                    <span class="status-indicator online"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

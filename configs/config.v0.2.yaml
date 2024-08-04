@@ -1,0 +1,50 @@
+# tonkey Configuration Example
+
+# HTTP server binding
+bind: "0.0.0.0:8080"
+
+# JWT secret for token signing (CHANGE THIS IN PRODUCTION!)
+jwt_secret: "dev-secret-change-me-in-production"
+
+# Database configuration
+database:
+  driver: "sqlite"  # or "postgres"
+  path: "./tonkey.db"  # for sqlite
+  # connection_string: "postgres://user:pass@localhost/tonkey?sslmode=require"  # for postgres
+
+# TON provider configuration
+provider:
+  kind: "mock"  # mock, toncenter, or liteclient
+  toncenter_url: "https://toncenter.com/api/v2"
+  api_key: ""  # Optional API key for TON Center
+
+# Rate limiting
+rate_limit:
+  enabled: true
+  requests_per_second: 10
+  burst: 20
+
+# WebSocket for real-time updates
+websocket:
+  enabled: true
+
+# Webhooks for event notifications
+webhooks:
+  enabled: true
+  workers: 4
+
+# Prometheus metrics
+metrics:
+  enabled: true
+
+# Telegram bot integration
+telegram:
+  enabled: false
+  token: "PUT_BOT_TOKEN_HERE"
+  allow_chats: [12345678]
+  poll: true
+
+# Authentication settings
+auth:
+  allow_registration: false  # Set to true to allow public signups
+  password_min_length: 12

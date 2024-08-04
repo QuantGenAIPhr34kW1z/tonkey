@@ -1,0 +1,52 @@
+<div class="card">
+    <div class="card-header">
+        <h3>Audit Log</h3>
+        <div class="header-filters">
+            <select class="filter-select" onchange="filterAudit(this.value)">
+                <option value="">All Actions</option>
+                <option value="login">Login</option>
+                <option value="totp_setup">2FA Setup</option>
+                <option value="password_reset">Password Reset</option>
+                <option value="api_key_create">API Key Created</option>
+                <option value="tx_send">Transaction Sent</option>
+            </select>
+            <button class="btn btn-secondary" onclick="exportAuditLog()">Export CSV</button>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Timestamp</th>
+                    <th>User ID</th>
+                    <th>Action</th>
+                    <th>Resource</th>
+                    <th>IP Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Logs}}
+                <tr>
+                    <td>{{.ID}}</td>
+                    <td>{{formatTime .CreatedAt}}</td>
+                    <td>{{if .UserID}}{{.UserID}}{{else}}<em>System</em>{{end}}</td>
+                    <td><span class="badge action-{{.Action}}">{{.Action}}</span></td>
+                    <td>
+                        {{if .ResourceType}}
+                        {{.ResourceType}}{{if .ResourceID}}:{{.ResourceID}}{{end}}
+                        {{else}}
+                        <em>-</em>
+                        {{end}}
+                    </td>
+                    <td>{{if .IPAddress}}{{.IPAddress}}{{else}}<em>-</em>{{end}}</td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="6" class="empty-state">No audit logs found</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>

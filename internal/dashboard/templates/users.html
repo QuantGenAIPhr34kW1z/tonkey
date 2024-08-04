@@ -1,0 +1,49 @@
+<div class="card">
+    <div class="card-header">
+        <h3>User Management</h3>
+        <button class="btn btn-primary" onclick="showCreateUserModal()">Add User</button>
+    </div>
+    <div class="card-body">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Last Login</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Users}}
+                <tr>
+                    <td>{{.ID}}</td>
+                    <td><strong>{{.Username}}</strong></td>
+                    <td>{{if .Email}}{{.Email}}{{else}}<em>-</em>{{end}}</td>
+                    <td><span class="badge {{if eq .Role "admin"}}warning{{else}}info{{end}}">{{.Role}}</span></td>
+                    <td>
+                        {{if .IsActive}}
+                        <span class="status-badge active">Active</span>
+                        {{else}}
+                        <span class="status-badge inactive">Inactive</span>
+                        {{end}}
+                    </td>
+                    <td>{{formatTime .CreatedAt}}</td>
+                    <td>{{if .LastLogin}}{{formatTime .LastLogin}}{{else}}<em>Never</em>{{end}}</td>
+                    <td>
+                        <button class="btn btn-small btn-secondary" onclick="editUser({{.ID}})">Edit</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteUser({{.ID}})">Delete</button>
+                    </td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="8" class="empty-state">No users found</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>

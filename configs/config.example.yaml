@@ -1,0 +1,149 @@
+# tonkey Configuration Example
+# See README.md for full documentation
+
+# Server binding
+bind: "0.0.0.0:8080"
+jwt_secret: "dev-secret-change-me"  # Generate with: openssl rand -base64 32
+
+# Database configuration
+database:
+  driver: sqlite  # sqlite or postgres
+  path: ./tonkey.db
+  # connection_string: postgres://user:pass@localhost/tonkey?sslmode=require
+  max_conns: 25
+  max_idle_conns: 5
+
+# TON Provider
+provider:
+  kind: mock  # mock, toncenter, or liteclient
+  toncenter_url: https://toncenter.com/api/v2
+  api_key: ""
+  timeout: 10s
+
+# Rate limiting
+rate_limit:
+  enabled: true
+  requests_per_second: 100
+  burst: 200
+
+# WebSocket support
+websocket:
+  enabled: true
+
+# Webhooks
+webhooks:
+  enabled: true
+  workers: 10
+  max_retries: 5
+
+# Prometheus metrics
+metrics:
+  enabled: true
+
+# Telegram Bot
+telegram:
+  enabled: false
+  token: "PUT_TOKEN_HERE"
+  allow_chats: [12345678]
+  poll: true
+
+# Authentication
+auth:
+  allow_registration: false
+  require_verification: false
+  password_min_length: 8
+  allowed_domains: []
+
+# Two-Factor Authentication 
+totp:
+  enabled: true
+  issuer: tonkey
+  enforce_admin: true
+
+# Audit logging 
+audit:
+  enabled: true
+  retention_days: 90
+
+# IP filtering 
+ip_filter:
+  enabled: false
+  default_mode: allow  # allow or deny
+
+# Smart contracts 
+contracts:
+  enabled: true
+
+# Multi-signature wallets 
+multisig:
+  enabled: true
+  proposal_expiration: 168h  # 7 days
+
+# Transaction batching 
+batch:
+  enabled: true
+  max_batch_size: 100
+
+# API key authentication 
+api_keys:
+  enabled: true
+
+# Background jobs 
+jobs:
+  enabled: true
+  worker_count: 4
+  poll_interval: 5s
+
+# Database migrations 
+migrations:
+  auto_migrate: true
+
+# OpenAPI documentation 
+openapi:
+  enabled: true
+  path: /api/docs
+
+# Admin dashboard 
+dashboard:
+  enabled: true
+  path: /admin/dashboard
+
+# Distributed tracing 
+tracing:
+  enabled: false
+  service_name: tonkey
+  endpoint: ""  # OTLP endpoint
+  exporter: stdout  # otlp, jaeger, zipkin, stdout
+  sample_rate: 1.0
+
+# Geographic rate limiting 
+geo_rate_limit:
+  enabled: false
+  default_rps: 100
+  default_burst: 200
+  blocked_countries: []
+  geoip_database: ""  # Path to MaxMind GeoIP2 database
+
+# NFT support 
+nft:
+  enabled: true
+  max_collections: 100
+  max_nfts_per_mint: 100
+  default_royalty: 5.0
+  marketplace_enabled: true
+
+# Jetton (token) support 
+jetton:
+  enabled: true
+  max_tokens: 50
+  default_decimals: 9
+  allow_minting: true
+  allow_burning: true
+
+# GraphQL API 
+graphql:
+  enabled: true
+  path: /graphql
+  playground: true
+  max_depth: 10
+  max_complexity: 100

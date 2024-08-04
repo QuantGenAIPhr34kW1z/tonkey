@@ -1,0 +1,87 @@
+<div class="settings-grid">
+    <div class="card">
+        <div class="card-header">
+            <h3>General Settings</h3>
+        </div>
+        <div class="card-body">
+            <div class="setting-item">
+                <label>Server Version</label>
+                <span class="setting-value">v{{.Version}}</span>
+            </div>
+            <div class="setting-item">
+                <label>Database Driver</label>
+                <span class="setting-value">SQLite / PostgreSQL</span>
+            </div>
+            <div class="setting-item">
+                <label>TON Provider</label>
+                <span class="setting-value">TonCenter / LiteClient</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Feature Flags</h3>
+        </div>
+        <div class="card-body">
+            <div class="setting-item">
+                <label>WebSocket Support</label>
+                <span class="setting-value enabled">Enabled</span>
+            </div>
+            <div class="setting-item">
+                <label>Webhooks</label>
+                <span class="setting-value enabled">Enabled</span>
+            </div>
+            <div class="setting-item">
+                <label>Two-Factor Auth</label>
+                <span class="setting-value enabled">Enabled</span>
+            </div>
+            <div class="setting-item">
+                <label>Audit Logging</label>
+                <span class="setting-value enabled">Enabled</span>
+            </div>
+            <div class="setting-item">
+                <label>Rate Limiting</label>
+                <span class="setting-value enabled">Enabled</span>
+            </div>
+            <div class="setting-item">
+                <label>IP Filtering</label>
+                <span class="setting-value enabled">Enabled</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Security</h3>
+        </div>
+        <div class="card-body">
+            <div class="setting-item">
+                <label>JWT Token Expiry</label>
+                <span class="setting-value">24 hours</span>
+            </div>
+            <div class="setting-item">
+                <label>Password Min Length</label>
+                <span class="setting-value">8 characters</span>
+            </div>
+            <div class="setting-item">
+                <label>Rate Limit</label>
+                <span class="setting-value">100 req/s (burst: 200)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Maintenance</h3>
+        </div>
+        <div class="card-body">
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="runMigrations()">Run Migrations</button>
+                <button class="btn btn-secondary" onclick="cleanupAuditLogs()">Cleanup Old Logs</button>
+                <button class="btn btn-secondary" onclick="clearJobQueue()">Clear Failed Jobs</button>
+                <button class="btn btn-danger" onclick="resetRateLimits()">Reset Rate Limits</button>
+            </div>
+        </div>
+    </div>
+</div>

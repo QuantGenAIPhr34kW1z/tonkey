@@ -1,0 +1,53 @@
+<div class="card">
+    <div class="card-header">
+        <h3>Background Jobs</h3>
+        <div class="header-filters">
+            <select class="filter-select" onchange="filterJobs(this.value)">
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="completed">Completed</option>
+                <option value="failed">Failed</option>
+            </select>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Queue</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Attempts</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Jobs}}
+                <tr>
+                    <td>{{.ID}}</td>
+                    <td><code>{{.JobType}}</code></td>
+                    <td><span class="badge">{{.Queue}}</span></td>
+                    <td><span class="status-badge {{.Status}}">{{.Status}}</span></td>
+                    <td>{{.Priority}}</td>
+                    <td>{{.Attempts}}/{{.MaxAttempts}}</td>
+                    <td>{{formatTime .CreatedAt}}</td>
+                    <td>
+                        {{if eq .Status "failed"}}
+                        <button class="btn btn-small btn-primary" onclick="retryJob({{.ID}})">Retry</button>
+                        {{end}}
+                        <button class="btn btn-small btn-secondary" onclick="viewJob({{.ID}})">View</button>
+                    </td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="8" class="empty-state">No jobs found</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>

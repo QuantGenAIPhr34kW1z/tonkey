@@ -1,0 +1,508 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "tonkey API",
+    "description": "Production-ready TON blockchain gateway API. Provides wallet management, transaction handling, webhooks, and real-time updates.",
+    "version": "1.1.0",
+    "contact": {
+      "name": "tonkey Team",
+      "url": "https://github.com/tonkey",
+      "email": "support@tonkey.io"
+    }
+  },
+  "servers": [
+    {"url": "http://localhost:8080", "description": "Local development"}
+  ],
+  "tags": [
+    {"name": "auth", "description": "Authentication endpoints"},
+    {"name": "wallet", "description": "Wallet operations"},
+    {"name": "transaction", "description": "Transaction management"},
+    {"name": "webhook", "description": "Webhook subscriptions"},
+    {"name": "2fa", "description": "Two-factor authentication"},
+    {"name": "contract", "description": "Smart contract interactions"},
+    {"name": "multisig", "description": "Multi-signature wallets"},
+    {"name": "batch", "description": "Transaction batching"},
+    {"name": "apikey", "description": "API key management"},
+    {"name": "admin", "description": "Administration endpoints"}
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "tags": ["system"],
+        "summary": "Health check",
+        "description": "Returns OK if the service is healthy",
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {"description": "Service is healthy"}
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Login",
+        "description": "Authenticate with username and password to receive a JWT token",
+        "operationId": "login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/LoginRequest"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/LoginResponse"}
+              }
+            }
+          },
+          "401": {"description": "Invalid credentials"}
+        }
+      }
+    },
+    "/v1/wallet/{address}/balance": {
+      "get": {
+        "tags": ["wallet"],
+        "summary": "Get wallet balance",
+        "description": "Query the balance of a TON wallet address",
+        "operationId": "getBalance",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "address", "in": "path", "required": true, "schema": {"type": "string"}, "description": "TON wallet address"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Balance retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/BalanceResponse"}
+              }
+            }
+          },
+          "400": {"description": "Invalid address format"},
+          "401": {"description": "Unauthorized"},
+          "502": {"description": "Provider error"}
+        }
+      }
+    },
+    "/v1/tx/send": {
+      "post": {
+        "tags": ["transaction"],
+        "summary": "Send transaction",
+        "description": "Submit a transaction to the TON blockchain",
+        "operationId": "sendTransaction",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/SendTxRequest"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transaction submitted",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/SendTxResponse"}
+              }
+            }
+          },
+          "400": {"description": "Invalid request"},
+          "401": {"description": "Unauthorized"},
+          "502": {"description": "Provider error"}
+        }
+      }
+    },
+    "/v1/tx/{id}": {
+      "get": {
+        "tags": ["transaction"],
+        "summary": "Get transaction",
+        "description": "Retrieve transaction details by ID",
+        "operationId": "getTransaction",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "string"}, "description": "Transaction ID"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction found",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Transaction"}
+              }
+            }
+          },
+          "404": {"description": "Transaction not found"}
+        }
+      }
+    },
+    "/v1/webhooks": {
+      "get": {
+        "tags": ["webhook"],
+        "summary": "List webhooks",
+        "description": "List all webhook subscriptions for the authenticated user",
+        "operationId": "listWebhooks",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Webhooks listed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "webhooks": {"type": "array", "items": {"$ref": "#/components/schemas/Webhook"}},
+                    "count": {"type": "integer"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["webhook"],
+        "summary": "Create webhook",
+        "description": "Create a new webhook subscription",
+        "operationId": "createWebhook",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/WebhookRequest"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Webhook created",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Webhook"}
+              }
+            }
+          },
+          "400": {"description": "Invalid request"}
+        }
+      }
+    },
+    "/v1/api-keys": {
+      "get": {
+        "tags": ["apikey"],
+        "summary": "List API keys",
+        "operationId": "listAPIKeys",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "API keys listed",
+            "content": {
+              "application/json": {
+                "schema": {"type": "array", "items": {"$ref": "#/components/schemas/APIKey"}}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["apikey"],
+        "summary": "Create API key",
+        "operationId": "createAPIKey",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "scopes": {"type": "array", "items": {"type": "string"}},
+                  "expires_in": {"type": "integer", "description": "Days until expiration"}
+                },
+                "required": ["name"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "API key created"}
+        }
+      }
+    },
+    "/v1/contracts": {
+      "get": {
+        "tags": ["contract"],
+        "summary": "List contracts",
+        "operationId": "listContracts",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Contracts listed",
+            "content": {
+              "application/json": {
+                "schema": {"type": "array", "items": {"$ref": "#/components/schemas/Contract"}}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["contract"],
+        "summary": "Register contract",
+        "operationId": "registerContract",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "address": {"type": "string"},
+                  "name": {"type": "string"},
+                  "contract_type": {"type": "string"}
+                },
+                "required": ["address"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "Contract registered"}
+        }
+      }
+    },
+    "/v1/multisig": {
+      "get": {
+        "tags": ["multisig"],
+        "summary": "List multisig wallets",
+        "operationId": "listMultisigWallets",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Wallets listed",
+            "content": {
+              "application/json": {
+                "schema": {"type": "array", "items": {"$ref": "#/components/schemas/MultisigWallet"}}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tx/batch": {
+      "get": {
+        "tags": ["batch"],
+        "summary": "List batches",
+        "operationId": "listBatches",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Batches listed",
+            "content": {
+              "application/json": {
+                "schema": {"type": "array", "items": {"$ref": "#/components/schemas/Batch"}}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["batch"],
+        "summary": "Create batch",
+        "operationId": "createBatch",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "transactions": {"type": "array", "items": {"$ref": "#/components/schemas/SendTxRequest"}}
+                },
+                "required": ["transactions"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "Batch created"}
+        }
+      }
+    },
+    "/auth/2fa/setup": {
+      "post": {
+        "tags": ["2fa"],
+        "summary": "Setup 2FA",
+        "operationId": "setup2FA",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {"description": "2FA setup initiated"}
+        }
+      }
+    },
+    "/auth/2fa/verify": {
+      "post": {
+        "tags": ["2fa"],
+        "summary": "Verify 2FA",
+        "operationId": "verify2FA",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {"code": {"type": "string"}},
+                "required": ["code"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "2FA enabled"},
+          "400": {"description": "Invalid code"}
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "user": {"type": "string", "description": "Username"},
+          "pass": {"type": "string", "description": "Password"}
+        },
+        "required": ["user", "pass"]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {"type": "string", "description": "JWT token"}
+        }
+      },
+      "BalanceResponse": {
+        "type": "object",
+        "properties": {
+          "address": {"type": "string", "description": "TON address"},
+          "balance": {"type": "integer", "format": "int64", "description": "Balance in nanoTON"}
+        }
+      },
+      "SendTxRequest": {
+        "type": "object",
+        "properties": {
+          "from": {"type": "string", "description": "Sender address"},
+          "to": {"type": "string", "description": "Recipient address"},
+          "amount": {"type": "integer", "format": "int64", "description": "Amount in nanoTON"}
+        },
+        "required": ["from", "to", "amount"]
+      },
+      "SendTxResponse": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string", "description": "Transaction ID"}
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "created_at": {"type": "integer", "format": "int64"},
+          "from": {"type": "string"},
+          "to": {"type": "string"},
+          "amount": {"type": "integer", "format": "int64"},
+          "status": {"type": "string", "enum": ["pending", "submitted", "confirmed", "failed"]}
+        }
+      },
+      "WebhookRequest": {
+        "type": "object",
+        "properties": {
+          "url": {"type": "string", "format": "uri"},
+          "event_type": {"type": "string", "enum": ["transaction", "balance_change"]},
+          "filter_address": {"type": "string"},
+          "secret": {"type": "string"}
+        },
+        "required": ["url", "event_type", "secret"]
+      },
+      "Webhook": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "format": "int64"},
+          "url": {"type": "string"},
+          "event_type": {"type": "string"},
+          "filter_address": {"type": "string"},
+          "is_active": {"type": "boolean"},
+          "created_at": {"type": "integer", "format": "int64"}
+        }
+      },
+      "APIKey": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "format": "int64"},
+          "name": {"type": "string"},
+          "key_prefix": {"type": "string"},
+          "scopes": {"type": "array", "items": {"type": "string"}},
+          "is_active": {"type": "boolean"},
+          "created_at": {"type": "integer", "format": "int64"},
+          "use_count": {"type": "integer"}
+        }
+      },
+      "Contract": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "format": "int64"},
+          "address": {"type": "string"},
+          "name": {"type": "string"},
+          "contract_type": {"type": "string"},
+          "state": {"type": "string"},
+          "created_at": {"type": "integer", "format": "int64"}
+        }
+      },
+      "MultisigWallet": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "format": "int64"},
+          "address": {"type": "string"},
+          "name": {"type": "string"},
+          "threshold": {"type": "integer"},
+          "signers": {"type": "array", "items": {"type": "string"}},
+          "is_active": {"type": "boolean"}
+        }
+      },
+      "Batch": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "format": "int64"},
+          "status": {"type": "string", "enum": ["pending", "processing", "completed", "failed", "cancelled"]},
+          "total_amount": {"type": "integer", "format": "int64"},
+          "tx_count": {"type": "integer"},
+          "processed_count": {"type": "integer"},
+          "created_at": {"type": "integer", "format": "int64"}
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token authentication"
+      },
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API key authentication"
+      }
+    }
+  }
+}

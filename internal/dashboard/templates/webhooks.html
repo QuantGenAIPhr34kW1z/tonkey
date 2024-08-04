@@ -1,0 +1,47 @@
+<div class="card">
+    <div class="card-header">
+        <h3>Webhook Subscriptions</h3>
+        <button class="btn btn-primary" onclick="showCreateWebhookModal()">Add Webhook</button>
+    </div>
+    <div class="card-body">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>URL</th>
+                    <th>Event Type</th>
+                    <th>Filter Address</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Webhooks}}
+                <tr>
+                    <td>{{.ID}}</td>
+                    <td><code class="url">{{.URL}}</code></td>
+                    <td><span class="badge">{{.EventType}}</span></td>
+                    <td>{{if .FilterAddress}}<code class="address">{{.FilterAddress}}</code>{{else}}<em>All</em>{{end}}</td>
+                    <td>
+                        {{if .IsActive}}
+                        <span class="status-badge active">Active</span>
+                        {{else}}
+                        <span class="status-badge inactive">Paused</span>
+                        {{end}}
+                    </td>
+                    <td>{{formatTime .CreatedAt}}</td>
+                    <td>
+                        <button class="btn btn-small btn-secondary" onclick="testWebhook({{.ID}})">Test</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteWebhook({{.ID}})">Delete</button>
+                    </td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="7" class="empty-state">No webhooks configured</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>

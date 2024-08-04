@@ -1,0 +1,9 @@
+services:
+  tonkey:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./configs:/app/configs:ro
+      - ./tonkey.db:/app/tonkey.db
+    command: ["./tonkeyd", "-config", "./configs/config.example.yaml"]
